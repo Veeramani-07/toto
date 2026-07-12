@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitFlow — Premium Monthly Habit Tracker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for premium chart rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Auth Page Container -->
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h2>HabitFlow</h2>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form-container">
+                <h3>Welcome Back</h3>
+                <p class="auth-subtitle">Log in to track your monthly progress</p>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required placeholder="Enter username" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </form>
+                <p class="auth-toggle-text">Don't have an account? <span id="go-to-register">Sign Up</span></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form-container" style="display: none;">
+                <h3>Create Account</h3>
+                <p class="auth-subtitle">Start tracking your habits today</p>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" required placeholder="Choose a username" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required placeholder="Create a password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                </form>
+                <p class="auth-toggle-text">Already have an account? <span id="go-to-login">Log In</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Application Container -->
+    <div class="app-container" id="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h2>HabitFlow</h2>
+            </div>
+
+            <!-- Month Selection Navigator -->
+            <div class="month-navigator-card">
+                <label class="nav-label">Active Period</label>
+                <div class="month-navigator">
+                    <button class="btn-nav" id="prev-month-btn" title="Previous Month">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span id="current-month-label">July 2026</span>
+                    <button class="btn-nav" id="next-month-btn" title="Next Month">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar Statistics Card -->
+            <div class="sidebar-stats">
+                <div class="stat-box">
+                    <span class="stat-header">Habits Start Date</span>
+                    <span class="stat-value" id="habits-start-date">01/01/2026</span>
+                </div>
+                <div class="stat-box accent-best">
+                    <span class="stat-header">Best Habit</span>
+                    <span class="stat-value" id="best-habit-name">Daily Exercise</span>
+                </div>
+                <div class="stat-box accent-worst">
+                    <span class="stat-header">Worst Habit</span>
+                    <span class="stat-value" id="worst-habit-name">Read 10+ Pages</span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <button class="btn btn-primary" id="open-modal-btn">
+                <i class="fa-solid fa-plus"></i> Add New Habit
+            </button>
+
+            <!-- User profile & Logout -->
+            <div class="user-profile-section">
+                <div class="user-info">
+                    <i class="fa-solid fa-circle-user user-avatar"></i>
+                    <span id="display-username">demo</span>
+                </div>
+                <button class="btn-logout" id="logout-btn" title="Log Out">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Panel -->
+        <main class="main-panel">
+            <!-- Upper Dashboard Area: Line Chart + Completion Stats Cards -->
+            <section class="dashboard-upper">
+                <!-- Line Chart Area -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Daily Completion Trend (%)</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="completion-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stats Cards Group on Right -->
+                <div class="dashboard-stats-group">
+                    <div class="dashboard-stat-card complete-100">
+                        <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="card-info">
+                            <span class="card-value" id="days-100-percent">0 Days</span>
+                            <span class="card-label">100% Complete</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-stat-card complete-50">
+                        <div class="card-icon"><i class="fa-solid fa-chart-simple"></i></div>
+                        <div class="card-info">
+                            <span class="card-value" id="days-50-percent">0 Days</span>
+                            <span class="card-label">50%+ Complete</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-stat-card complete-0">
+                        <div class="card-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                        <div class="card-info">
+                            <span class="card-value" id="days-0-percent">0 Days</span>
+                            <span class="card-label">0% Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lower Grid Area: Scrollable Habit Checklist Table -->
+            <section class="dashboard-lower">
+                <div class="grid-header-row">
+                    <h3>Habit Tracker Grid</h3>
+                    <p class="subtitle">Check or uncheck boxes to log completions. Changes sync instantly.</p>
+                </div>
+                <div class="habit-grid-container">
+                    <table class="habit-table" id="habit-table">
+                        <!-- Table header and body will be generated dynamically in app.js -->
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Habit Modal -->
+    <div class="modal-overlay" id="habit-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add New Habit</h2>
+                <button class="modal-close" id="close-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="habit-form">
+                <div class="form-group">
+                    <label for="habit-name">Habit Name</label>
+                    <input type="text" id="habit-name" required placeholder="E.g., Read 10+ Pages, Drink Protein..." autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="habit-category">Category</label>
+                    <select id="habit-category" class="select-input" required>
+                        <option value="Health">Health</option>
+                        <option value="Work">Work</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Shopping">Shopping</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="habit-start-date">Start Date</label>
+                    <input type="date" id="habit-start-date" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Habit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

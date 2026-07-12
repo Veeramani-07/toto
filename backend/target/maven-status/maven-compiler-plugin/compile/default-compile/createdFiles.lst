@@ -1,0 +1,12 @@
+com\example\todo\controller\AuthController.class
+com\example\todo\HabitSeeder.class
+com\example\todo\controller\HabitController.class
+com\example\todo\controller\HabitController$ToggleRequest.class
+com\example\todo\model\User.class
+com\example\todo\repository\HabitRepository.class
+com\example\todo\config\SecurityConfig.class
+com\example\todo\repository\HabitCompletionRepository.class
+com\example\todo\TodoApplication.class
+com\example\todo\model\HabitCompletion.class
+com\example\todo\model\Habit.class
+com\example\todo\repository\UserRepository.class
