@@ -17,8 +17,16 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource() {
-        String jdbcUrl = databaseUrl.startsWith("jdbc:") ? databaseUrl
-                : "jdbc:" + databaseUrl;
+        String jdbcUrl;
+        if (databaseUrl.startsWith("jdbc:postgresql://")) {
+            jdbcUrl = databaseUrl;
+        } else if (databaseUrl.startsWith("jdbc:postgres://")) {
+            jdbcUrl = databaseUrl.replace("jdbc:postgres://", "jdbc:postgresql://");
+        } else if (databaseUrl.startsWith("postgres://")) {
+            jdbcUrl = databaseUrl.replace("postgres://", "jdbc:postgresql://");
+        } else {
+            jdbcUrl = "jdbc:postgresql://" + databaseUrl;
+        }
         return DataSourceBuilder.create()
                 .url(jdbcUrl)
                 .driverClassName("org.postgresql.Driver")

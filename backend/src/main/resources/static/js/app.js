@@ -277,7 +277,8 @@ async function fetchCompletions() {
     const endDateStr = formatDateString(currentYear, currentMonth, totalDays);
 
     try {
-        const response = await fetch(`${API_URL}/completions?start=${startDateStr}&end=${endDateStr}`);
+        const params = new URLSearchParams({ start: startDateStr, end: endDateStr });
+        const response = await fetch(`${API_URL}/completions?${params}`);
         if (response.status === 401) {
             showAuthScreen();
             return;
@@ -732,38 +733,33 @@ async function handleAddHabit(e) {
 }
 
 // Handle delete habit
-window.handleDeleteHabit = async function(id) {
-    if (!window._confirmDelete) return;
-    window._confirmDelete(id);
-};
-
-function confirmDeleteHabit(id) {
+window.handleDeleteHabit = function(id) {
+    const safeId = parseInt(id, 10);
+    if (!Number.isInteger(safeId) || safeId <= 0) return;
     showConfirmDialog('Delete this habit and all its history?', async () => {
+        try {
+            const response = await fetch(`${API_URL}/${safeId}`, {
+                method: 'DELETE',
+                headers: csrfHeaders()
+            });
 
-    try {
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE',
-            headers: csrfHeaders()
-        });
+            if (response.status === 401) {
+                showAuthScreen();
+                return;
+            }
+            if (!response.ok) throw new Error('Failed to delete habit');
 
-        if (response.status === 401) {
-            showAuthScreen();
-            return;
+            habits = habits.filter(h => h.id !== safeId);
+            completions = completions.filter(c => c.habitId !== safeId);
+
+            showToast('Habit deleted successfully', 'info');
+            renderGridTable();
+            updateStatsAndChart();
+        } catch (error) {
+            showToast(error.message, 'error');
         }
-        if (!response.ok) throw new Error('Failed to delete habit');
-
-        habits = habits.filter(h => h.id !== id);
-        completions = completions.filter(c => c.habitId !== id);
-
-        showToast('Habit deleted successfully', 'info');
-        renderGridTable();
-        updateStatsAndChart();
-
-    } catch (error) {
-        showToast(error.message, 'error');
-    }
     });
-}
+};
 
 // Date Helpers
 function getDaysInMonth(year, month) {
@@ -858,5 +854,3 @@ function showConfirmDialog(message, onConfirm) {
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 }
-
-window._confirmDelete = confirmDeleteHabit;

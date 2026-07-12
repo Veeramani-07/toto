@@ -525,7 +525,8 @@ body {
     transition: var(--transition-fast);
 }
 
-.habit-name-col:hover .btn-habit-delete {
+.habit-name-col:hover .btn-habit-delete,
+.habit-name-wrapper:hover .btn-habit-delete {
     opacity: 1;
 }
 
@@ -666,7 +667,8 @@ body {
 }
 
 #habit-form input,
-#habit-form select {
+#habit-form select,
+.select-input {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius-md);
@@ -679,7 +681,8 @@ body {
 }
 
 #habit-form input:focus,
-#habit-form select:focus {
+#habit-form select:focus,
+.select-input:focus {
     border-color: var(--color-accent);
     background: rgba(255, 255, 255, 0.06);
 }

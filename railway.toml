@@ -1,0 +1,9 @@
+[build]
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "java -Dspring.profiles.active=prod -jar app.jar"
+healthcheckPath = "/api/auth/me"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
